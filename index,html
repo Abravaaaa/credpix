@@ -55,6 +55,7 @@
             margin-bottom: 20px;
         }
 
+
         .brand {
             font-size: 26px;
             font-weight: 800;
