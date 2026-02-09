@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>AtivaçãoElite – Business Credit & Finance</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ffa3;
+            --primary-glow: rgba(0, 255, 163, 0.25);
+            --bg-body: #020202;
+            --bg-card: rgba(18, 18, 18, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --text-dim: #666;
+            --danger: #ff3b3b;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-body);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 10%, #0d2119 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, #0a0a2a 0%, transparent 40%);
+            min-height: 100vh;
+        }
+
+        .layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        @media (max-width: 1000px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand span { color: var(--primary); }
+
+        .status-pill {
+            background: rgba(0, 255, 163, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-pill::before {
+            content: '';
+            width: 8px; height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Dash de Crédito */
+        .credit-hero {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .credit-label {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .credit-value {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -2px;
+        }
+
+        .credit-value small {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .credit-stats {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 30px;
+        }
+
+        .stat-item h4 { margin: 0; font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
+        .stat-item p { margin: 8px 0 0; font-size: 18px; font-weight: 600; }
+
+        /* Painel Lateral / Formulário */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+        }
+
+        h3 { margin: 0 0 20px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; }
+        
+        input, select {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); }
+
+        .btn-action {
+            width: 100%;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 20px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px var(--primary-glow);
+        }
+
+        /* Extrato Profissional */
+        .statement-list { margin-top: 10px; }
+        .statement-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--glass-border);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .st-icon {
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .st-info { flex: 1; }
+        .st-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .st-meta { font-size: 11px; color: var(--text-dim); }
+        .st-amount { font-weight: 700; color: var(--danger); font-size: 15px; }
+
+        /* Loader & Modais */
+        #loader {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .ring {
+            width: 80px; height: 80px;
+            border: 4px solid #111;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #receipt {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 420px;
+            z-index: 10000;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 100px rgba(0,255,163,0.15);
+        }
+
+        .receipt-header { text-align: center; margin-bottom: 30px; }
+        .check-circle { 
+            width: 64px; height: 64px; 
+            background: var(--primary); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 15px;
+            color: #000;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+    <header>
+        <div class="brand">ATIVAÇÃO<span>ELITE</span></div>
+        <div class="status-pill">CRÉDITO EMPRESARIAL ATIVO</div>
+    </header>
+
+    <!-- Main Board -->
+    <div class="main-content">
+        <div class="credit-hero">
+            <span class="credit-label">Limite de Crédito Disponível</span>
+            <h1 class="credit-value"><small>R$</small><span id="saldo-disponivel"> 50.000,00</span></h1>
+            
+            <div class="credit-stats">
+                <div class="stat-item">
+                    <h4>Total Aprovado</h4>
+                    <p>R$ 50.000,00</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Utilizado</h4>
+                    <p id="total-utilizado" style="color: var(--danger);">R$ 0,00</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Taxa de Juros</h4>
+                    <p>1.2% ao mês</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="margin-top: 30px;">
+            <h3>Extrato de Utilização</h3>
+            <div id="statement-list" class="statement-list">
+                <div style="text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px;">
+                    Nenhuma movimentação registrada no histórico.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Actions -->
+    <div class="sidebar">
+        <div class="glass-card">
+            <h3>Retirar Crédito (PIX)</h3>
+            <form id="pix-form">
+                <div class="input-group">
+                    <label>Tipo de Chave</label>
+                    <select id="tipo-chave">
+                        <option>CNPJ / CPF</option>
+                        <option>E-mail</option>
+                        <option>Telefone Celular</option>
+                        <option>Chave Aleatória (EVP)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Dados do Favorecido (Nome)</label>
+                    <input type="text" id="nome" placeholder="Nome completo ou Razão Social" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Chave do Destinatário</label>
+                    <input type="text" id="chave" placeholder="Insira a chave aqui" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Valor da Retirada (R$)</label>
+                    <input type="text" id="valor" placeholder="0,00" required>
+                </div>
+
+                <button type="submit" class="btn-action">
+                    LIBERAR RECURSO AGORA
+                </button>
+            </form>
+        </div>
+
+        <div class="glass-card" style="background: rgba(0, 255, 163, 0.03);">
+            <h4 style="margin: 0; color: var(--primary); font-size: 14px;">INFO ADICIONAL</h4>
+            <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-top: 10px;">
+                As retiradas via PIX são instantâneas. O valor utilizado será adicionado à sua fatura mensal de crédito empresarial com vencimento automático.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Loader -->
+<div id="loader">
+    <div class="ring"></div>
+    <h2 id="loader-msg" style="margin-top: 30px; letter-spacing: 2px; font-weight: 300;">PROCESSANDO...</h2>
+</div>
+
+<!-- Recibo Modal -->
+<div id="receipt" class="glass-card">
+    <div class="receipt-header">
+        <div class="check-circle">✓</div>
+        <h2 style="margin: 0; font-size: 22px;">Transferência Concluída</h2>
+        <p style="color: var(--text-dim); font-size: 13px; margin-top: 5px;">Recurso liberado com sucesso.</p>
+    </div>
+
+    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; font-size: 14px; margin-bottom: 25px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-dim);">Valor Debitado</span>
+            <strong id="rec-valor" style="color: var(--primary);">R$ 0,00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-dim);">Favorecido</span>
+            <strong id="rec-nome">---</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-dim);">ID da Transação</span>
+            <span id="rec-id" style="font-family: monospace; font-size: 12px;">---</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-dim);">Data/Hora</span>
+            <span id="rec-data" style="font-size: 12px;">---</span>
+        </div>
+    </div>
+
+    <button onclick="closeReceipt()" class="btn-action" style="background: #222; color: #fff;">FECHAR COMPROVANTE</button>
+</div>
+
+<script>
+    let saldoDisponivel = 2000000.00;
+    let saldoUtilizado = 0.00;
+
+    // Máscara de Moeda (Real)
+    const valorInput = document.getElementById('valor');
+    valorInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        v = (v / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        e.target.value = v;
+    });
+
+    const form = document.getElementById('pix-form');
+    const loader = document.getElementById('loader');
+    const loaderMsg = document.getElementById('loader-msg');
+    const receipt = document.getElementById('receipt');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        const valor = parseFloat(valorInput.value.replace(/\./g, '').replace(',', '.'));
+        const nomeDest = document.getElementById('nome').value;
+
+        if (isNaN(valor) || valor <= 0) return alert("Insira um valor válido.");
+        if (valor > saldoDisponivel) return alert("Saldo de crédito insuficiente.");
+
+        processarTransferencia(valor, nomeDest);
+    });
+
+    function processarTransferencia(v, nome) {
+        loader.style.display = 'flex';
+        const msgs = ["CRIPTOGRAFANDO...", "AUTORIZANDO CRÉDITO...", "LIBERANDO PIX...", "FINALIZANDO..."];
+        let step = 0;
+
+        const interval = setInterval(() => {
+            loaderMsg.textContent = msgs[step];
+            step++;
+            if (step >= msgs.length) {
+                clearInterval(interval);
+                concluir(v, nome);
+            }
+        }, 900);
+    }
+
+    function concluir(v, nome) {
+        // Atualiza Lógica de Saldo
+        saldoDisponivel -= v;
+        saldoUtilizado += v;
+
+        // Atualiza UI principal
+        document.getElementById('saldo-disponivel').textContent = saldoDisponivel.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('total-utilizado').textContent = 'R$ ' + saldoUtilizado.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+        // Gera Comprovante
+        const txId = 'ATV-' + Math.random().toString(36).substr(2, 10).toUpperCase();
+        const dataH = new Date().toLocaleString('pt-BR');
+
+        document.getElementById('rec-valor').textContent = 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('rec-nome').textContent = nome;
+        document.getElementById('rec-id').textContent = txId;
+        document.getElementById('rec-data').textContent = dataH;
+
+        // Adiciona ao Extrato
+        adicionarExtrato(nome, v, dataH);
+
+        loader.style.display = 'none';
+        receipt.style.display = 'block';
+    }
+
+    function adicionarExtrato(nome, v, data) {
+        const container = document.getElementById('statement-list');
+        if (container.innerText.includes("Nenhuma movimentação")) container.innerHTML = '';
+
+        const item = document.createElement('div');
+        item.className = 'statement-item';
+        item.innerHTML = `
+            <div class="st-icon">📤</div>
+            <div class="st-info">
+                <div class="st-title">Saída de Crédito via PIX</div>
+                <div class="st-meta">${nome} • ${data}</div>
+            </div>
+            <div class="st-amount">- R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+        `;
+        container.prepend(item);
+    }
+
+    function closeReceipt() {
+        receipt.style.display = 'none';
+        form.reset();
+    }
+</script>
+
+</body>
+</html>
