@@ -84,10 +84,16 @@
             width: 8px; height: 8px;
             background: var(--primary);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary);
+            box-shadow: 0 0 100px var(--primary);
+            animation: pulse 2s infinite;
         }
 
-        /* Dash de Crédito */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         .credit-hero {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
@@ -99,6 +105,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         .credit-label {
@@ -135,12 +142,7 @@
         .stat-item h4 { margin: 0; font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
         .stat-item p { margin: 8px 0 0; font-size: 18px; font-weight: 600; }
 
-        /* Painel Lateral / Formulário */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
+        .sidebar { display: flex; flex-direction: column; gap: 30px; }
 
         .glass-card {
             background: var(--bg-card);
@@ -189,8 +191,13 @@
             box-shadow: 0 15px 30px var(--primary-glow);
         }
 
-        /* Extrato Profissional */
-        .statement-list { margin-top: 10px; }
+        .statement-list { margin-top: 10px; max-height: 500px; overflow-y: auto; padding-right: 10px; }
+        
+        /* Custom Scrollbar */
+        .statement-list::-webkit-scrollbar { width: 4px; }
+        .statement-list::-webkit-scrollbar-track { background: transparent; }
+        .statement-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
         .statement-item {
             display: flex;
             align-items: center;
@@ -217,7 +224,6 @@
         .st-meta { font-size: 11px; color: var(--text-dim); }
         .st-amount { font-weight: 700; color: var(--danger); font-size: 15px; }
 
-        /* Loader & Modais */
         #loader {
             display: none;
             position: fixed;
@@ -269,14 +275,13 @@
 <div class="layout">
     <header>
         <div class="brand">ATIVAÇÃO<span>ELITE</span></div>
-        <div class="status-pill">CRÉDITO EMPRESARIAL ATIVO</div>
+        <div class="status-pill">SESSÃO CRIPTOGRAFADA</div>
     </header>
 
-    <!-- Main Board -->
     <div class="main-content">
         <div class="credit-hero">
             <span class="credit-label">Limite de Crédito Disponível</span>
-            <h1 class="credit-value"><small>R$</small><span id="saldo-disponivel"> 50.000,00</span></h1>
+            <h1 class="credit-value"><small>R$</small><span id="saldo-disponivel">50.000,00</span></h1>
             
             <div class="credit-stats">
                 <div class="stat-item">
@@ -288,23 +293,23 @@
                     <p id="total-utilizado" style="color: var(--danger);">R$ 0,00</p>
                 </div>
                 <div class="stat-item">
-                    <h4>Taxa de Juros</h4>
-                    <p>1.2% ao mês</p>
+                    <h4>Empresa</h4>
+                    <p id="user-display">ELITE CORP</p>
                 </div>
             </div>
         </div>
 
         <div class="glass-card" style="margin-top: 30px;">
-            <h3>Extrato de Utilização</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Extrato de Utilização</h3>
+                <button onclick="limparSessao()" style="background: transparent; border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 10px; cursor: pointer; padding: 5px 10px; border-radius: 5px;">Resetar Sessão</button>
+            </div>
             <div id="statement-list" class="statement-list">
-                <div style="text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px;">
-                    Nenhuma movimentação registrada no histórico.
-                </div>
+                <!-- Populado via JS -->
             </div>
         </div>
     </div>
 
-    <!-- Sidebar Actions -->
     <div class="sidebar">
         <div class="glass-card">
             <h3>Retirar Crédito (PIX)</h3>
@@ -320,76 +325,117 @@
                 </div>
                 
                 <div class="input-group">
-                    <label>Dados do Favorecido (Nome)</label>
-                    <input type="text" id="nome" placeholder="Nome completo ou Razão Social" required>
+                    <label>Favorecido</label>
+                    <input type="text" id="nome" placeholder="Nome ou Razão Social" required>
                 </div>
 
                 <div class="input-group">
                     <label>Chave do Destinatário</label>
-                    <input type="text" id="chave" placeholder="Insira a chave aqui" required>
+                    <input type="text" id="chave" placeholder="Chave PIX" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Valor da Retirada (R$)</label>
+                    <label>Valor (R$)</label>
                     <input type="text" id="valor" placeholder="0,00" required>
                 </div>
 
                 <button type="submit" class="btn-action">
-                    LIBERAR RECURSO AGORA
+                    EXECUTAR TRANSFERÊNCIA
                 </button>
             </form>
         </div>
 
-        <div class="glass-card" style="background: rgba(0, 255, 163, 0.03);">
-            <h4 style="margin: 0; color: var(--primary); font-size: 14px;">INFO ADICIONAL</h4>
-            <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-top: 10px;">
-                As retiradas via PIX são instantâneas. O valor utilizado será adicionado à sua fatura mensal de crédito empresarial com vencimento automático.
+        <div class="glass-card" style="background: rgba(0, 255, 163, 0.03); border-color: var(--primary-glow);">
+            <h4 style="margin: 0; color: var(--primary); font-size: 13px;">SEGURANÇA ATIVA</h4>
+            <p style="font-size: 11px; color: var(--text-dim); line-height: 1.5; margin-top: 10px;">
+                Esta operação está protegida por criptografia de ponta a ponta. O valor debitado é descontado do seu limite de crédito empresarial pré-aprovado.
             </p>
         </div>
     </div>
 </div>
 
-<!-- Loader -->
 <div id="loader">
     <div class="ring"></div>
-    <h2 id="loader-msg" style="margin-top: 30px; letter-spacing: 2px; font-weight: 300;">PROCESSANDO...</h2>
+    <h2 id="loader-msg" style="margin-top: 30px; letter-spacing: 2px; font-weight: 300; font-size: 14px;">AUTENTICANDO...</h2>
 </div>
 
-<!-- Recibo Modal -->
 <div id="receipt" class="glass-card">
     <div class="receipt-header">
         <div class="check-circle">✓</div>
-        <h2 style="margin: 0; font-size: 22px;">Transferência Concluída</h2>
-        <p style="color: var(--text-dim); font-size: 13px; margin-top: 5px;">Recurso liberado com sucesso.</p>
+        <h2 style="margin: 0; font-size: 20px;">PIX Confirmado</h2>
+        <p style="color: var(--text-dim); font-size: 12px; margin-top: 5px;">A operação foi autorizada e concluída.</p>
     </div>
 
-    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; font-size: 14px; margin-bottom: 25px;">
+    <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 16px; font-size: 13px; margin-bottom: 25px; border: 1px solid var(--glass-border);">
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-dim);">Valor Debitado</span>
+            <span style="color: var(--text-dim);">Valor Liberado</span>
             <strong id="rec-valor" style="color: var(--primary);">R$ 0,00</strong>
         </div>
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-dim);">Favorecido</span>
+            <span style="color: var(--text-dim);">Para</span>
             <strong id="rec-nome">---</strong>
         </div>
         <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-dim);">ID da Transação</span>
-            <span id="rec-id" style="font-family: monospace; font-size: 12px;">---</span>
+            <span style="color: var(--text-dim);">ID</span>
+            <span id="rec-id" style="font-family: monospace; font-size: 11px;">---</span>
         </div>
         <div style="display: flex; justify-content: space-between;">
-            <span style="color: var(--text-dim);">Data/Hora</span>
-            <span id="rec-data" style="font-size: 12px;">---</span>
+            <span style="color: var(--text-dim);">Horário</span>
+            <span id="rec-data" style="font-size: 11px;">---</span>
         </div>
     </div>
 
-    <button onclick="closeReceipt()" class="btn-action" style="background: #222; color: #fff;">FECHAR COMPROVANTE</button>
+    <button onclick="closeReceipt()" class="btn-action" style="background: #111; color: #fff; border: 1px solid #333;">VOLTAR</button>
 </div>
 
 <script>
-    let saldoDisponivel = 2000000.00;
-    let saldoUtilizado = 0.00;
+    // Configuração de Persistência
+    const LIMITE_PADRAO = 50000.00;
+    let dadosSessao = {
+        saldoDisponivel: LIMITE_PADRAO,
+        saldoUtilizado: 0.00,
+        historico: []
+    };
 
-    // Máscara de Moeda (Real)
+    // Carregar do LocalStorage ao iniciar
+    function carregarDados() {
+        const salvos = localStorage.getItem('ativacao_elite_data');
+        if (salvos) {
+            dadosSessao = JSON.parse(salvos);
+        }
+        renderizarUI();
+    }
+
+    function salvarDados() {
+        localStorage.setItem('ativacao_elite_data', JSON.stringify(dadosSessao));
+    }
+
+    function renderizarUI() {
+        document.getElementById('saldo-disponivel').textContent = dadosSessao.saldoDisponivel.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('total-utilizado').textContent = 'R$ ' + dadosSessao.saldoUtilizado.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        
+        const container = document.getElementById('statement-list');
+        if (dadosSessao.historico.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px;">Sem movimentações no extrato.</div>';
+        } else {
+            container.innerHTML = '';
+            dadosSessao.historico.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'statement-item';
+                div.innerHTML = `
+                    <div class="st-icon">📤</div>
+                    <div class="st-info">
+                        <div class="st-title">PIX p/ ${item.nome}</div>
+                        <div class="st-meta">${item.data} • ID: ${item.id.substring(0,8)}</div>
+                    </div>
+                    <div class="st-amount">- R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+    }
+
+    // Máscara de Moeda
     const valorInput = document.getElementById('valor');
     valorInput.addEventListener('input', (e) => {
         let v = e.target.value.replace(/\D/g, '');
@@ -404,77 +450,71 @@
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        
         const valor = parseFloat(valorInput.value.replace(/\./g, '').replace(',', '.'));
         const nomeDest = document.getElementById('nome').value;
 
-        if (isNaN(valor) || valor <= 0) return alert("Insira um valor válido.");
-        if (valor > saldoDisponivel) return alert("Saldo de crédito insuficiente.");
+        if (valor <= 0 || isNaN(valor)) return alert("Valor inválido.");
+        if (valor > dadosSessao.saldoDisponivel) return alert("Limite de crédito insuficiente.");
 
-        processarTransferencia(valor, nomeDest);
+        processar(valor, nomeDest);
     });
 
-    function processarTransferencia(v, nome) {
+    function processar(v, nome) {
         loader.style.display = 'flex';
-        const msgs = ["CRIPTOGRAFANDO...", "AUTORIZANDO CRÉDITO...", "LIBERANDO PIX...", "FINALIZANDO..."];
-        let step = 0;
-
+        const msgs = ["VALIDANDO TOKEN...", "ANALISANDO CRÉDITO...", "ENVIANDO PIX...", "SUCESSO!"];
+        let i = 0;
         const interval = setInterval(() => {
-            loaderMsg.textContent = msgs[step];
-            step++;
-            if (step >= msgs.length) {
+            loaderMsg.textContent = msgs[i];
+            i++;
+            if (i >= msgs.length) {
                 clearInterval(interval);
-                concluir(v, nome);
+                concluirTransacao(v, nome);
             }
-        }, 900);
+        }, 800);
     }
 
-    function concluir(v, nome) {
-        // Atualiza Lógica de Saldo
-        saldoDisponivel -= v;
-        saldoUtilizado += v;
-
-        // Atualiza UI principal
-        document.getElementById('saldo-disponivel').textContent = saldoDisponivel.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        document.getElementById('total-utilizado').textContent = 'R$ ' + saldoUtilizado.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-
-        // Gera Comprovante
-        const txId = 'ATV-' + Math.random().toString(36).substr(2, 10).toUpperCase();
+    function concluirTransacao(v, nome) {
+        const txId = 'ELITE' + Math.random().toString(36).substr(2, 12).toUpperCase();
         const dataH = new Date().toLocaleString('pt-BR');
 
+        // Atualizar Lógica
+        dadosSessao.saldoDisponivel -= v;
+        dadosSessao.saldoUtilizado += v;
+        dadosSessao.historico.unshift({
+            id: txId,
+            nome: nome,
+            valor: v,
+            data: dataH
+        });
+
+        // Persistir e Atualizar
+        salvarDados();
+        renderizarUI();
+
+        // Recibo
         document.getElementById('rec-valor').textContent = 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         document.getElementById('rec-nome').textContent = nome;
         document.getElementById('rec-id').textContent = txId;
         document.getElementById('rec-data').textContent = dataH;
 
-        // Adiciona ao Extrato
-        adicionarExtrato(nome, v, dataH);
-
         loader.style.display = 'none';
         receipt.style.display = 'block';
-    }
-
-    function adicionarExtrato(nome, v, data) {
-        const container = document.getElementById('statement-list');
-        if (container.innerText.includes("Nenhuma movimentação")) container.innerHTML = '';
-
-        const item = document.createElement('div');
-        item.className = 'statement-item';
-        item.innerHTML = `
-            <div class="st-icon">📤</div>
-            <div class="st-info">
-                <div class="st-title">Saída de Crédito via PIX</div>
-                <div class="st-meta">${nome} • ${data}</div>
-            </div>
-            <div class="st-amount">- R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-        `;
-        container.prepend(item);
     }
 
     function closeReceipt() {
         receipt.style.display = 'none';
         form.reset();
     }
+
+    function limparSessao() {
+        if(confirm("Deseja realmente limpar todo o histórico e resetar o saldo?")) {
+            localStorage.removeItem('ativacao_elite_data');
+            location.reload();
+        }
+    }
+
+    // Inicializar
+    window.onload = carregarDados;
 </script>
 
 </body>
